@@ -82,7 +82,9 @@ test("one passport becomes two different plans, plus the default", async ({ brow
   await expect(a).toContainText("calm");
   await expect(a).toContainText("Thai");
   await expect(a).toContainText("No compromises needed.");
-  await expect(a).toContainText("สวัสดีครับ");
+  await expect(page.getByTestId("robot-speech-a")).toContainText("ผมจะยืนห่าง ๆ");
+  await expect(page.getByTestId("robot-speech-a")).toContainText("จะบอกคุณก่อนทุกครั้งที่จะขยับ");
+  await expect(page.getByTestId("robot-speech-a")).not.toContainText("กังวล");
 
   // Robot B: the same passport within a fixed base with no head and no arms.
   const b = page.getByTestId("robot-card-b");
@@ -93,6 +95,8 @@ test("one passport becomes two different plans, plus the default", async ({ brow
   await expect(b).toContainText("places it nearby");
   await expect(b).toContainText("cannot change distance");
   await expect(b).toContainText("No arms");
+  await expect(page.getByTestId("robot-speech-b")).toContainText("ผมเป็นหุ่นแบบติดที่");
+  await expect(page.getByTestId("robot-speech-b")).not.toContainText("ยืนห่าง");
 
   // The JSON is the public profile: no anxiety, code, nickname or token.
   await page.locator("details summary").click();

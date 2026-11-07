@@ -15,7 +15,7 @@ export const robotCopy = {
     tokenHelp: "The token is the secret in the passport QR. It stays in this tab and is never stored.",
     read: "Read passport",
     reading: "Reading…",
-    speak: "Speak greeting",
+    speak: "Speak care summary",
     stop: "Stop voice",
     replay: "Replay behaviour",
     back: "Back to the Living Lab",
@@ -97,7 +97,7 @@ export const robotCopy = {
     tokenHelp: "โทเคนคือความลับใน QR ของพาสปอร์ต จะอยู่ในแท็บนี้เท่านั้นและไม่ถูกบันทึก",
     read: "อ่านพาสปอร์ต",
     reading: "กำลังอ่าน…",
-    speak: "พูดคำทักทาย",
+    speak: "พูดสรุปการดูแล",
     stop: "หยุดเสียง",
     replay: "เล่นพฤติกรรมอีกครั้ง",
     back: "กลับไป Living Lab",
@@ -165,22 +165,6 @@ export const robotCopy = {
     },
     captions: "คำบรรยาย",
     close: "ปิด"
-  }
-} as const;
-
-// What the robot actually says, in the language the passport asks for (not the console UI language).
-export const greetings = {
-  wai: {
-    th: "สวัสดีครับ ผมจะไหว้ทักทายและดูแลคุณตามที่พาสปอร์ตกำหนด",
-    en: "Hello. I will greet you with a wai, and care for you the way your passport says."
-  },
-  wave: {
-    th: "สวัสดีครับ ยินดีที่ได้รู้จัก ผมจะดูแลคุณตามที่พาสปอร์ตกำหนด",
-    en: "Hello, nice to meet you. I will care for you the way your passport says."
-  },
-  none: {
-    th: "สวัสดีครับ ผมจะทักทายด้วยเสียงโดยไม่ทำท่าทาง ตามที่คุณสะดวก",
-    en: "Hello. I will greet you with voice only, without gestures, as you prefer."
   }
 } as const;
 
