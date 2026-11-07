@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
-  createIdentity, IDENTITY_LIMITS, maskEmail, normaliseEmail,
+  createIdentity, IDENTITY_LIMITS, identityRequiredFromEnv, maskEmail, normaliseEmail, ownerForNewPassport,
   type ChallengeRecord, type IdentityStore, type OtpMailer, type ParticipantRecord
 } from "../lib/hri/identity";
 import type { RateDecision } from "../lib/hri/passport-api";
@@ -191,6 +191,23 @@ test("per-client limits stop code guessing across many emails", async () => {
   for (let i = 0; i < limit; i++) await h.identity.verifyCode(`x${i}@x.org`, "123456", "attacker");
   const blocked = await h.identity.verifyCode("victim@x.org", "123456", "attacker");
   assert.equal(!blocked.ok && blocked.error, "rate_limited");
+});
+
+test("HRI_IDENTITY_REQUIRED: on unless set to exactly false (event-day fallback)", () => {
+  assert.equal(identityRequiredFromEnv(undefined), true);
+  assert.equal(identityRequiredFromEnv(""), true);
+  assert.equal(identityRequiredFromEnv("true"), true);
+  assert.equal(identityRequiredFromEnv("0"), true, "only \"false\" turns it off, so a typo keeps the safe default");
+  assert.equal(identityRequiredFromEnv("false"), false);
+  assert.equal(identityRequiredFromEnv(" FALSE "), false);
+});
+
+test("passport owner: verified participant always linked; without one, refused unless identity is optional", () => {
+  const p = { id: "p1", email: "wu@gmail.com" };
+  assert.deepEqual(ownerForNewPassport(p, true), { ok: true, participantId: "p1" });
+  assert.deepEqual(ownerForNewPassport(p, false), { ok: true, participantId: "p1" }, "fallback still links verified people");
+  assert.deepEqual(ownerForNewPassport(null, true), { ok: false, error: "identity_required" });
+  assert.deepEqual(ownerForNewPassport(null, false), { ok: true, participantId: null });
 });
 
 test("maskEmail hides the address on shared screens", () => {

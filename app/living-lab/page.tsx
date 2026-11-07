@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import LivingLabClient, { type LabStats, type LabRobot } from "./LivingLabClient";
 import { readClientIdentity } from "./identity-actions";
+import { identityRequired } from "@/lib/hri/identity-server";
 
 export const dynamic = "force-dynamic";
 
@@ -61,5 +62,5 @@ export default async function LivingLabPage() {
   }
 
   const identity = await readClientIdentity();
-  return <LivingLabClient lang={lang} stats={stats} robots={robots} initialIdentity={identity} />;
+  return <LivingLabClient lang={lang} stats={stats} robots={robots} initialIdentity={identity} identityRequired={identityRequired()} />;
 }

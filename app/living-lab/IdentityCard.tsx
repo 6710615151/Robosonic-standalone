@@ -11,12 +11,14 @@ import type { Lang } from "./copy";
 
 type ErrorKey = keyof (typeof identityCopy)["en"]["errors"];
 
-export default function IdentityCard({ lang, identity, onChange, locked }: {
+export default function IdentityCard({ lang, identity, onChange, locked, required = true }: {
   lang: Lang;
   identity: ClientIdentity;
   onChange: (identity: ClientIdentity) => void;
   // True while a calibration is running: switching person mid-session would save to the wrong owner.
   locked: boolean;
+  // False under the HRI_IDENTITY_REQUIRED=false fallback: verifying is offered but not needed to start.
+  required?: boolean;
 }) {
   const t = identityCopy[lang];
   const [step, setStep] = useState<"email" | "code">("email");
@@ -102,7 +104,7 @@ export default function IdentityCard({ lang, identity, onChange, locked }: {
   return (
     <section className="ll-id" aria-label={t.title}>
       <h2><ShieldCheck size={20} aria-hidden="true" /> {t.title}</h2>
-      <p className="ll-note">{t.why}</p>
+      <p className="ll-note">{required ? t.why : t.optional}</p>
 
       {step === "email" ? (
         <form className="ll-id-form" onSubmit={(e) => { e.preventDefault(); send(); }}>

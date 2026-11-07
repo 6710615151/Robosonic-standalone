@@ -1,7 +1,7 @@
 // Wires the identity module to production adapters (Postgres, EmailJS, the shared rate limiter)
 // and to the participant cookie. Server-only.
 import { cookies } from "next/headers";
-import { createIdentity, DEV_ONLY_IDENTITY_SECRET, type Identity, type OtpMailer, type Participant } from "./identity";
+import { createIdentity, DEV_ONLY_IDENTITY_SECRET, identityRequiredFromEnv, type Identity, type OtpMailer, type Participant } from "./identity";
 import { emailJsConfigFromEnv, emailJsMailer } from "./identity-emailjs";
 import { prismaIdentityStore } from "./identity-store";
 import { consumeRateLimit } from "./rate-limit";
@@ -46,6 +46,11 @@ export function getIdentity(): Identity | null {
     ? createIdentity({ mailer: chooseMailer(), store: prismaIdentityStore, consume: consumeRateLimit, now: () => new Date(), secret })
     : null;
   return cached;
+}
+
+// HRI_IDENTITY_REQUIRED=false makes email verification optional (event-day fallback). Default: required.
+export function identityRequired(): boolean {
+  return identityRequiredFromEnv(process.env.HRI_IDENTITY_REQUIRED);
 }
 
 // The verified participant behind this request's cookie, or null.

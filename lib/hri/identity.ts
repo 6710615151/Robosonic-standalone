@@ -97,6 +97,21 @@ export function maskEmail(email: string): string {
   return `${email.slice(0, Math.min(2, at))}•••${email.slice(at)}`;
 }
 
+// Whether a new passport must have a verified owner. On by default; HRI_IDENTITY_REQUIRED=false is the
+// event-day fallback for when EmailJS cannot send (quota or outage). Only the exact string "false" turns it off.
+export function identityRequiredFromEnv(value: string | undefined): boolean {
+  return value?.trim().toLowerCase() !== "false";
+}
+
+// Who owns a passport about to be created: the verified participant if there is one; nobody if
+// identity is optional; otherwise the save is refused.
+export function ownerForNewPassport(participant: Participant | null, required: boolean):
+  | { ok: true; participantId: string | null }
+  | { ok: false; error: "identity_required" } {
+  if (participant) return { ok: true, participantId: participant.id };
+  return required ? { ok: false, error: "identity_required" } : { ok: true, participantId: null };
+}
+
 export function createIdentity(deps: IdentityDeps) {
   if (!deps.secret || deps.secret.length < 16) throw new Error("Identity secret must be at least 16 characters.");
   const L = IDENTITY_LIMITS;
